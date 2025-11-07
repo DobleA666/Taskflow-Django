@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar {{ proyecto.nombre }} - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                <h3 class="text-danger">¿Estás seguro?</h3>
+                <p class="lead">Estás a punto de eliminar el proyecto: <strong>"{{ proyecto.nombre }}"</strong></p>
+                
+                <div class="alert alert-warning text-start">
+                    <h6><i class="bi bi-info-circle"></i> Información del proyecto:</h6>
+                    <ul class="mb-0">
+                        <li><strong>Creador:</strong> {{ proyecto.creador.username }}</li>
+                        <li><strong>Estado:</strong> {{ proyecto.get_estado_display }}</li>
+                        <li><strong>Miembros:</strong> {{ proyecto.miembros.count }}</li>
+                        <li><strong>Tareas:</strong> {{ proyecto.tarea_set.count }}</li>
+                    </ul>
+                </div>
+                
+                <p class="text-muted mt-3">
+                    <strong>¡Atención!</strong> Esta acción no se puede deshacer. 
+                    Se eliminarán <strong>todas las tareas y comentarios</strong> asociados a este proyecto.
+                </p>
+                
+                <div class="mt-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sí, Eliminar Proyecto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

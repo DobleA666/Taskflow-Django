@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Tarea - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación
+                </h4>
+            </div>
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                <h3 class="text-danger">¿Estás seguro?</h3>
+                <p class="lead">Estás a punto de eliminar la tarea:</p>
+                <h5 class="text-dark">"{{ tarea.titulo }}"</h5>
+                
+                <div class="alert alert-warning mt-3">
+                    <small>
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Proyecto:</strong> {{ tarea.proyecto.nombre }}<br>
+                        <strong>Asignada a:</strong> {{ tarea.asignado_a.username|default:"Sin asignar" }}<br>
+                        <strong>Estado actual:</strong> {{ tarea.get_estado_display }}
+                    </small>
+                </div>
+                
+                <p class="text-muted">
+                    <strong>¡Atención!</strong> Esta acción no se puede deshacer. 
+                    Se eliminarán todos los comentarios asociados a esta tarea.
+                </p>
+                
+                <div class="mt-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'detalle_tarea' tarea.pk %}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sí, Eliminar Tarea
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

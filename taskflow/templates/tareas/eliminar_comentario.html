@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Comentario - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Eliminar Comentario
+                </h4>
+            </div>
+            <div class="card-body text-center">
+                <i class="bi bi-chat-text display-1 text-danger"></i>
+                <h3 class="text-danger mt-3">¿Estás seguro?</h3>
+                <p class="lead">Estás a punto de eliminar el siguiente comentario:</p>
+                
+                <div class="alert alert-warning text-start">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong>{{ comentario.autor.username }}</strong>
+                        <small class="text-muted">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <p class="mb-0">{{ comentario.contenido }}</p>
+                </div>
+                
+                <p class="text-muted">
+                    <strong>Información:</strong><br>
+                    <small>
+                        Tarea: {{ comentario.tarea.titulo }}<br>
+                        Proyecto: {{ comentario.tarea.proyecto.nombre }}
+                    </small>
+                </p>
+                
+                <div class="mt-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'detalle_tarea' comentario.tarea.pk %}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sí, Eliminar Comentario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

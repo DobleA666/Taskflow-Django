@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Proyectos - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-folder"></i> Mis Proyectos</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'crear_proyecto' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Proyecto
+        </a>
+    </div>
+</div>
+
+<!-- Formulario de búsqueda y filtros - DENTRO del block content -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-5">
+                        <label for="search" class="form-label">Buscar Proyectos</label>
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Buscar por nombre, descripción o creador..." 
+                               value="{{ search_query }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="estado" class="form-label">Filtrar por Estado</label>
+                        <select name="estado" id="estado" class="form-select">
+                            <option value="">Todos los estados</option>
+                            <option value="activo" {% if estado_filter == 'activo' %}selected{% endif %}>Activo</option>
+                            <option value="pausado" {% if estado_filter == 'pausado' %}selected{% endif %}>Pausado</option>
+                            <option value="completado" {% if estado_filter == 'completado' %}selected{% endif %}>Completado</option>
+                            <option value="cancelado" {% if estado_filter == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                        {% if search_query or estado_filter %}
+                        <a href="{% url 'lista_proyectos' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x"></i> Limpiar
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if proyectos %}
+<div class="row">
+    {% for proyecto in proyectos %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">{{ proyecto.nombre }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ proyecto.descripcion|truncatewords:20 }}</p>
+                <div class="mb-2">
+                    <span class="badge bg-{% if proyecto.estado == 'activo' %}success{% else %}warning{% endif %}">
+                        {{ proyecto.get_estado_display }}
+                    </span>
+                </div>
+                <p class="text-muted small">
+                    <i class="bi bi-person"></i> Creador: {{ proyecto.creador.username }}<br>
+                    <i class="bi bi-calendar"></i> Vence: {{ proyecto.fecha_vencimiento|date:"d/m/Y" }}<br>
+                    <i class="bi bi-people"></i> Miembros: {{ proyecto.miembros.count }}
+                </p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="btn btn-sm btn-outline-primary">Ver Detalles</a>
+                {% if user == proyecto.creador %}
+                <a href="{% url 'actualizar_proyecto' proyecto.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <a href="{% url 'eliminar_proyecto' proyecto.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Eliminar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginación - DENTRO del block content y después de los proyectos -->
+{% if is_paginated %}
+<nav aria-label="Paginación de proyectos" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}">
+                <i class="bi bi-chevron-double-left"></i> Primera
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}">
+                <i class="bi bi-chevron-left"></i> Anterior
+            </a>
+        </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}">
+                Siguiente <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}">
+                Última <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    
+    <div class="text-center text-muted mt-2">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} 
+        • {{ page_obj.paginator.count }} proyectos totales
+    </div>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-folder-x display-1 text-muted"></i>
+    <h3 class="text-muted">No tienes proyectos</h3>
+    <p class="text-muted">Comienza creando tu primer proyecto</p>
+    <a href="{% url 'crear_proyecto' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle"></i> Crear Primer Proyecto
+    </a>
+</div>
+{% endif %}
+{% endblock %}

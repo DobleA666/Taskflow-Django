@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Tarea - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">
+                    <i class="bi bi-pencil"></i> Editar Tarea: {{ tarea.titulo }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_titulo" class="form-label">Título de la Tarea</label>
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}
+                        <div class="text-danger small">{{ form.titulo.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_descripcion" class="form-label">Descripción</label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                        <div class="text-danger small">{{ form.descripcion.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_prioridad" class="form-label">Prioridad</label>
+                            {{ form.prioridad }}
+                            {% if form.prioridad.errors %}
+                            <div class="text-danger small">{{ form.prioridad.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_fecha_vencimiento" class="form-label">Fecha de Vencimiento</label>
+                            {{ form.fecha_vencimiento }}
+                            {% if form.fecha_vencimiento.errors %}
+                            <div class="text-danger small">{{ form.fecha_vencimiento.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_estado" class="form-label">Estado</label>
+                            <select name="estado" class="form-control" id="id_estado">
+                                <option value="pendiente" {% if tarea.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                                <option value="en_progreso" {% if tarea.estado == 'en_progreso' %}selected{% endif %}>En Progreso</option>
+                                <option value="completada" {% if tarea.estado == 'completada' %}selected{% endif %}>Completada</option>
+                                <option value="bloqueada" {% if tarea.estado == 'bloqueada' %}selected{% endif %}>Bloqueada</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_asignado_a" class="form-label">Asignar a</label>
+                            {{ form.asignado_a }}
+                            {% if form.asignado_a.errors %}
+                            <div class="text-danger small">{{ form.asignado_a.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Proyecto:</strong> {{ tarea.proyecto.nombre }} | 
+                            <strong>Creada por:</strong> {{ tarea.creador.username }} | 
+                            <strong>Fecha creación:</strong> {{ tarea.fecha_creacion|date:"d/m/Y H:i" }}
+                        </small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'detalle_tarea' tarea.pk %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-lg"></i> Actualizar Tarea
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

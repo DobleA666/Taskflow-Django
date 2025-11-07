@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}TaskFlow - Gestión de Proyectos{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light rounded p-5 mb-4">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-kanban text-primary"></i> TaskFlow</h1>
+        <p class="lead">Sistema de gestión de proyectos colaborativo. Organiza tus tareas, colabora con tu equipo y alcanza tus objetivos.</p>
+        <hr class="my-4">
+        <p>Gestiona proyectos, asigna tareas, establece prioridades y mantén a tu equipo sincronizado.</p>
+        <div class="mt-4">
+            {% if not user.is_authenticated %}
+            <a class="btn btn-primary btn-lg me-2" href="{% url 'registro' %}">
+                <i class="bi bi-person-plus"></i> Comenzar Gratis
+            </a>
+            <a class="btn btn-outline-secondary btn-lg" href="{% url 'login' %}">
+                <i class="bi bi-box-arrow-in-right"></i> Ingresar
+            </a>
+            {% else %}
+            <a class="btn btn-primary btn-lg" href="{% url 'dashboard' %}">
+                <i class="bi bi-speedometer2"></i> Ir al Dashboard
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row text-center mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <i class="bi bi-kanban display-4 text-primary"></i>
+                <h3 class="card-title">Gestión Visual</h3>
+                <p class="card-text">Organiza tus proyectos con tableros Kanban intuitivos y fáciles de usar.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <i class="bi bi-people display-4 text-success"></i>
+                <h3 class="card-title">Trabajo en Equipo</h3>
+                <p class="card-text">Colabora con tu equipo, asigna tareas y mantén a todos sincronizados.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <i class="bi bi-graph-up display-4 text-warning"></i>
+                <h3 class="card-title">Seguimiento</h3>
+                <p class="card-text">Monitorea el progreso de tus proyectos y tareas en tiempo real.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

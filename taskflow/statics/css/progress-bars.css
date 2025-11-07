@@ -1,0 +1,38 @@
+/* static/css/progress-bars.css */
+/* Estilos específicos para barras de progreso */
+
+.tarea-progreso {
+    min-width: 2em;
+    font-weight: 500;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    transition: width 0.5s ease-in-out, background-color 0.3s ease;
+}
+
+/* Colores para diferentes estados de progreso */
+.tarea-progreso.bg-success {
+    background-color: #198754 !important;
+}
+
+.tarea-progreso.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.tarea-progreso.bg-info {
+    background-color: #0dcaf0 !important;
+}
+
+/* Animación de carga */
+@keyframes progress-load {
+    0% {
+        transform: scaleX(0);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+.tarea-progreso {
+    transform-origin: left;
+    animation: progress-load 0.8s ease-out;
+}
