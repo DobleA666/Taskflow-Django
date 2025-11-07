@@ -100,3 +100,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login/Logout redirects (IMPORTANTE para autenticación)
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Configurar modelo de usuario personalizado
+AUTH_USER_MODEL = 'usuarios.UsuarioPersonalizado'
+
+# Configuración para login/logout
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
