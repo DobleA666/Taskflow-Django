@@ -108,3 +108,14 @@ AUTH_USER_MODEL = 'usuarios.UsuarioPersonalizado'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Esta línea debe estar
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Para producción
+
+# Media files (imágenes subidas por usuarios)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ proyecto.nombre }} - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div>
+        <h1 class="h2"><i class="bi bi-folder"></i> {{ proyecto.nombre }}</h1>
+        <p class="text-muted">{{ proyecto.descripcion }}</p>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        {% if user == proyecto.creador %}
+        <a href="{% url 'actualizar_proyecto' proyecto.pk %}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a href="{% url 'eliminar_proyecto' proyecto.pk %}" class="btn btn-outline-danger me-2">
+            <i class="bi bi-trash"></i> Eliminar
+        </a>
+        {% endif %}
+        <a href="{% url 'crear_tarea_proyecto' proyecto.pk %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nueva Tarea
+        </a>
+    </div>
+</div>
+
+<!-- Estadísticas del Proyecto -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Tareas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ proyecto.total_tareas }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-check-square text-primary fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Tareas Completadas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ proyecto.tareas_completadas }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-check-circle text-success fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Tareas Pendientes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ proyecto.tareas_pendientes }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-clock text-warning fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Miembros
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ proyecto.miembros.count|add:1 }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-people text-info fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información del Proyecto -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="bi bi-info-circle"></i> Información del Proyecto</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Estado:</strong> 
+                    <span class="badge bg-{% if proyecto.estado == 'activo' %}success{% else %}warning{% endif %}">
+                        {{ proyecto.get_estado_display }}
+                    </span>
+                </p>
+                <p><strong>Creador:</strong> {{ proyecto.creador.get_full_name|default:proyecto.creador.username }}</p>
+                <p><strong>Fecha de creación:</strong> {{ proyecto.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                <p><strong>Fecha de vencimiento:</strong> {{ proyecto.fecha_vencimiento|date:"d/m/Y" }}</p>
+                
+                <hr>
+                <h6>Miembros del Proyecto:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-person-fill"></i> {{ proyecto.creador.username }} (Creador)</li>
+                    {% for miembro in proyecto.miembros.all %}
+                    <li><i class="bi bi-person"></i> {{ miembro.username }}</li>
+                    {% empty %}
+                    <li class="text-muted">No hay miembros adicionales</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista de Tareas -->
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-check-square"></i> Tareas del Proyecto</h6>
+                <span class="badge bg-light text-dark">{{ tareas.count }} tareas</span>
+            </div>
+            <div class="card-body">
+                {% if tareas %}
+                <div class="list-group list-group-flush">
+                    {% for tarea in tareas %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ tarea.titulo }}</h6>
+                                <p class="mb-1 text-muted small">{{ tarea.descripcion|truncatewords:15 }}</p>
+                                <small class="text-muted">
+                                    <i class="bi bi-person"></i> Asignado a: {{ tarea.asignado_a.username|default:"Sin asignar" }} |
+                                    <i class="bi bi-calendar"></i> Vence: {{ tarea.fecha_vencimiento|date:"d/m/Y"|default:"Sin fecha" }}
+                                </small>
+                            </div>
+                            <div class="text-end ms-3">
+                                <span class="badge bg-{% if tarea.prioridad == 4 %}danger{% elif tarea.prioridad == 3 %}warning{% else %}success{% endif %} mb-1">
+                                    {{ tarea.get_prioridad_display }}
+                                </span>
+                                <br>
+                                <span class="badge bg-secondary">{{ tarea.get_estado_display }}</span>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="{% url 'detalle_tarea' tarea.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <a href="{% url 'actualizar_tarea' tarea.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-check-square display-1 text-muted"></i>
+                    <h5 class="text-muted">No hay tareas en este proyecto</h5>
+                    <p class="text-muted">Comienza creando la primera tarea</p>
+                    <a href="{% url 'crear_tarea_proyecto' proyecto.pk %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Crear Primera Tarea
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
